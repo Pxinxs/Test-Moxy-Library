@@ -5,8 +5,9 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -27,9 +28,11 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Main
 
     private RecyclerView recyclerView;
     private ProgressBar progressBar;
+    private Button btnReload;
+    private TextView tvError;
 
+    private static final String POST_ID = "id";
     private static final String TITLE = "title";
-    private static final String BODY = "body";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +41,12 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Main
 
         recyclerView = findViewById(R.id.rvMain);
         progressBar = findViewById(R.id.pBar);
+        btnReload = findViewById(R.id.btnReload);
+        tvError = findViewById(R.id.tvError);
+
+        btnReload.setOnClickListener(view -> presenter.getPosts());
 
         adapter = new MainAdapter(this);
-
-        presenter.attach(this);
     }
 
     @Override
@@ -50,36 +55,37 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Main
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
+
         recyclerView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showError(String errorMessage) {
-        Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show();
+        btnReload.setVisibility(View.VISIBLE);
+        tvError.setVisibility(View.VISIBLE);
+        tvError.setText(errorMessage);
     }
 
     @Override
     public void showLoading() {
+        btnReload.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
+        tvError.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void hideLoading() {
+        tvError.setVisibility(View.GONE);
+        btnReload.setVisibility(View.GONE);
         recyclerView.setVisibility(View.GONE);
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void onCardClick(String title, String body) {
+    public void onCardClick(int id, String title) {
         startActivity(new Intent(this, DetailActivity.class)
-                .putExtra(TITLE, title)
-                .putExtra(BODY, body));
-    }
-
-    @Override
-    protected void onDestroy() {
-        presenter.detach();
-        super.onDestroy();
+                .putExtra(POST_ID, id)
+                .putExtra(TITLE, title));
     }
 }

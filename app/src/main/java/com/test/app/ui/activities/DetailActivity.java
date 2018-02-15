@@ -1,17 +1,31 @@
 package com.test.app.ui.activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.test.app.R;
+import com.test.app.entity.Post;
+import com.test.app.interfaces.DetailView;
+import com.test.app.presenter.DetailPresenter;
 
-public class DetailActivity extends AppCompatActivity {
+public class DetailActivity extends MvpAppCompatActivity implements DetailView {
 
+    private static final String POST_ID = "id";
     private static final String TITLE = "title";
-    private static final String BODY = "body";
+
+    @InjectPresenter
+    DetailPresenter presenter;
+
+    @ProvidePresenter
+    DetailPresenter provideDetailPresenter() {
+        return new DetailPresenter(getIntent().getIntExtra(POST_ID, -1));
+    }
+
+    private TextView tvBody;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,21 +33,21 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
-        TextView tvBody = findViewById(R.id.tvBody);
+        tvBody = findViewById(R.id.tvBody);
 
         String title = getIntent().getStringExtra(TITLE);
-        String body = getIntent().getStringExtra(BODY);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(title);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                DetailActivity.super.onBackPressed();
-            }
-        });
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        toolbar.setNavigationOnClickListener(view -> DetailActivity.super.onBackPressed());
 
-        tvBody.setText(body);
+    }
+
+    @Override
+    public void showDetailPost(Post post) {
+        tvBody.setText(post.body);
     }
 }

@@ -6,56 +6,39 @@ import com.test.app.entity.Post;
 import com.test.app.interfaces.MainView;
 import com.test.app.model.MainModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @InjectViewState
 public class MainPresenter extends MvpPresenter<MainView> {
 
-    private MainView mView;
     private MainModel mModel;
-    private List<Post> mPosts;
 
     public MainPresenter() {
         // we can inject MainModel with DI
         mModel = new MainModel();
-        mPosts = new ArrayList<>();
+
+        getPosts();
     }
 
-    public void attach(MainView view) {
-        mView = view;
-        if (mPosts.size() > 0) {
-            mView.showContent(mPosts);
-        } else {
-            getPosts();
-        }
-    }
-
-    private void getPosts() {
-        if (mView != null)
-            mView.showLoading();
+    public void getPosts() {
+        getViewState().showLoading();
 
         mModel.getPosts(new MainModel.LoadCallback() {
             @Override
             public void onLoadSuccess(List<Post> posts) {
-                mPosts = posts;
-                if (mView != null) {
-                    mView.hideLoading();
-                    mView.showContent(posts);
-                }
+                getViewState().hideLoading();
+                getViewState().showContent(posts);
             }
 
             @Override
             public void onLoadError(String errorMessage) {
-                if (mView != null) {
-                    mView.hideLoading();
-                    mView.showError(errorMessage);
+                getViewState().hideLoading();
+                if (errorMessage != null) {
+                    getViewState().showError(errorMessage);
+                } else {
+                    getViewState().showError("Some error");
                 }
             }
         });
-    }
-
-    public void detach() {
-        mView = null;
     }
 }
