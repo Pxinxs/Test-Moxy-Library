@@ -31,8 +31,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Main
     private Button btnReload;
     private TextView tvError;
 
-    private static final String POST_ID = "id";
     private static final String TITLE = "title";
+    private static final String DETAIL = "detail";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,9 +83,9 @@ public class MainActivity extends MvpAppCompatActivity implements MainView, Main
     }
 
     @Override
-    public void onCardClick(int id, String title) {
+    public void onCardClick(String title, String detail) {
         startActivity(new Intent(this, DetailActivity.class)
-                .putExtra(POST_ID, id)
-                .putExtra(TITLE, title));
+                .putExtra(TITLE, title)
+                .putExtra(DETAIL, detail));
     }
 }

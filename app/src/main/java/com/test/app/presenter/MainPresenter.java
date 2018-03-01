@@ -14,7 +14,6 @@ public class MainPresenter extends MvpPresenter<MainView> {
     private MainModel mModel;
 
     public MainPresenter() {
-        // we can inject MainModel with DI
         mModel = new MainModel();
 
         getPosts();

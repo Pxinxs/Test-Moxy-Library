@@ -52,11 +52,11 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.ViewHolder> {
             tvTitle = itemView.findViewById(R.id.tvTitle);
 
             tvTitle.setOnClickListener(view ->
-                    callbackItem.onCardClick(posts.get(getAdapterPosition()).id, posts.get(getAdapterPosition()).title));
+                    callbackItem.onCardClick(posts.get(getAdapterPosition()).title, posts.get(getAdapterPosition()).body));
         }
     }
 
     public interface CallbackItem {
-        void onCardClick(int id, String title);
+        void onCardClick(String title, String detail);
     }
 }

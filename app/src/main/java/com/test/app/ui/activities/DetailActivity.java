@@ -5,26 +5,14 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
-import com.arellomobile.mvp.presenter.InjectPresenter;
-import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.test.app.R;
-import com.test.app.entity.Post;
-import com.test.app.interfaces.DetailView;
-import com.test.app.presenter.DetailPresenter;
 
-public class DetailActivity extends MvpAppCompatActivity implements DetailView {
+public class DetailActivity extends MvpAppCompatActivity {
 
-    private static final String POST_ID = "id";
     private static final String TITLE = "title";
+    private static final String DETAIL = "detail";
 
-    @InjectPresenter
-    DetailPresenter presenter;
-
-    @ProvidePresenter
-    DetailPresenter provideDetailPresenter() {
-        return new DetailPresenter(getIntent().getIntExtra(POST_ID, -1));
-    }
-
+    private Toolbar toolbar;
     private TextView tvBody;
 
     @Override
@@ -32,22 +20,23 @@ public class DetailActivity extends MvpAppCompatActivity implements DetailView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         tvBody = findViewById(R.id.tvBody);
 
         String title = getIntent().getStringExtra(TITLE);
+        String detail = getIntent().getStringExtra(DETAIL);
 
+        initToolbar(title);
+
+        tvBody.setText(detail);
+    }
+
+    private void initToolbar(String title) {
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(title);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         toolbar.setNavigationOnClickListener(view -> DetailActivity.super.onBackPressed());
-
-    }
-
-    @Override
-    public void showDetailPost(Post post) {
-        tvBody.setText(post.body);
     }
 }
