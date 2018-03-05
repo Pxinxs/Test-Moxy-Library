@@ -35,6 +35,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
                 if (errorMessage != null) {
                     getViewState().showError(errorMessage);
                 } else {
+                    // show default error
                     getViewState().showError("Some error");
                 }
             }
